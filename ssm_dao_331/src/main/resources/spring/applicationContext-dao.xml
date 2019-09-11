@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--引入jdbc属性文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+    <!--创建数据源对象-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+
+    <!--SqlSessionFactoryBean对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源对象-->
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="plugins">
+            <!--注入数据属性-->
+            <array>
+            <!--引入插件类型-->
+                <bean class="com.github.pagehelper.PageInterceptor">
+                <!--告诉分页插件，你使用的是什么数据库-->
+                    <property name="properties">
+                        <props>
+                            <!--helperDialect： 分页插件的方言-->
+                            <prop key="helperDialect">oracle</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+     </bean>
+
+    <!--扫描dao包，创建dao、接口的动态代理对象：MapperScannerConfigurer-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--指定dao层的包路径-->
+        <property name="basePackage" value="com.qjl.dao"></property>
+    </bean>
+
+
+</beans>
