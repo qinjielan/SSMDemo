@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+         http://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/security
+         http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--扫描包：创建web层对象-->
+    <context:component-scan base-package="com.qjl.controller"></context:component-scan>
+    <context:component-scan base-package="com.qjl.log"></context:component-scan>
+    <!--视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <!--注解驱动-->
+    <mvc:annotation-driven conversion-service="conversionService"></mvc:annotation-driven>
+
+    <!--静态资源放行-->
+    <mvc:default-servlet-handler></mvc:default-servlet-handler>
+    <!--<mvc:resources mapping="/css/*" location="/css/"></mvc:resources>-->
+    <!--<mvc:resources mapping="/img/*" location="/img/"></mvc:resources>-->
+    <!--<mvc:resources mapping="/plugins/*" location="/plugins/"></mvc:resources>-->
+
+    <!--创建类型转换器工厂类对象-->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.qjl.converter.StringToDateConverter"></bean>
+            </set>
+        </property>
+    </bean>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+    <!--配置开启security的注解支持-->
+    <security:global-method-security secured-annotations="enabled"/>
+
+</beans>
